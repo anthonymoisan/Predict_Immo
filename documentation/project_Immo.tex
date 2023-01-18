@@ -1,0 +1,2567 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{project\_Immo}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{description-du-projet}{%
+\section{Description du projet}\label{description-du-projet}}
+
+Le projet s'intéresse au prix de l'immobilier sur Paris. Est-on en
+mesure d'avoir une bonne prédiction sur la valeur mobilière d'un bien
+
+    \hypertarget{lecture-des-jeux-de-donnuxe9es}{%
+\section{Lecture des jeux de
+données}\label{lecture-des-jeux-de-donnuxe9es}}
+
+Les jeux de données sont disponibles sur
+https://www.data.gouv.fr/fr/datasets/demandes-de-valeurs-foncieres-geolocalisees/
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Fonction pour lire les donnnées en fonction du fichier}
+\PY{k}{def} \PY{n+nf}{ReadFile}\PY{p}{(}\PY{n}{nomFile}\PY{p}{,} \PY{n}{delimiter} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{|}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} lecture du fichier excel}
+    \PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{nomFile}\PY{p}{,} \PY{n}{delimiter} \PY{o}{=} \PY{n}{delimiter}\PY{p}{,} \PY{n}{low\PYZus{}memory} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{taille du jeu de donnees :}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{df}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+    \PY{k}{return} \PY{n}{df}
+    
+    
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Fonction pour extraire les données à partir d\PYZsq{}un numéro de département}
+\PY{k}{def} \PY{n+nf}{ExtractDepartement}\PY{p}{(}\PY{n}{df}\PY{p}{,} \PY{n}{numDep}\PY{p}{)}\PY{p}{:}
+    \PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{code\PYZus{}departement}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{str}\PY{p}{)}
+    \PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Validation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{code\PYZus{}departement}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{n}{numDep} \PY{p}{)}
+    \PY{n}{dfDep} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Validation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{==}\PY{k+kc}{True}\PY{p}{]}
+    \PY{n}{dfDep} \PY{o}{=} \PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Validation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Departement : }\PY{l+s+si}{\PYZob{}0\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{numDep}\PY{p}{)}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Taille du jeu de donnees}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+    \PY{k}{return} \PY{n}{dfDep}       
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df1} \PY{o}{=} \PY{n}{ReadFile}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{../input/AvecCoordonneesGeo/full.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+taille du jeu de donnees : (1429093, 40)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df2} \PY{o}{=} \PY{n}{ReadFile}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{../input/AvecCoordonneesGeo/full2021.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+taille du jeu de donnees : (4375223, 40)
+    \end{Verbatim}
+
+    \hypertarget{concatuxe9nation-des-donnuxe9es}{%
+\subsection{Concaténation des
+données}\label{concatuxe9nation-des-donnuxe9es}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Concaténation des deux jeux de données}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{df1}\PY{p}{,}\PY{n}{df2}\PY{p}{]}\PY{p}{)}
+\PY{c+c1}{\PYZsh{},keys=[\PYZsq{}2022\PYZsq{},\PYZsq{}2021\PYZsq{}])}
+\PY{c+c1}{\PYZsh{}, names = [\PYZsq{}FileInput\PYZsq{}, \PYZsq{}RowId\PYZsq{}])}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{taille suite à union :}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{df}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+taille suite à union : (5804316, 40)
+    \end{Verbatim}
+
+    \hypertarget{ruxe9duction-uxe0-un-duxe9partement}{%
+\subsection{Réduction à un
+département}\label{ruxe9duction-uxe0-un-duxe9partement}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep} \PY{o}{=} \PY{n}{ExtractDepartement}\PY{p}{(}\PY{n}{df}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{75}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{dfDepIni} \PY{o}{=} \PY{n}{dfDep}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Departement : 75
+Taille du jeu de donnees (130696, 40)
+    \end{Verbatim}
+
+    \hypertarget{nettoyage-du-jeu-de-donnuxe9es}{%
+\section{Nettoyage du jeu de
+données}\label{nettoyage-du-jeu-de-donnuxe9es}}
+
+    \hypertarget{nettoyage}{%
+\subsection{Nettoyage}\label{nettoyage}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des lignes en doublon}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop\PYZus{}duplicates}\PY{p}{(}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(119224, 40)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des longitudes et latitudes null}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{longitude}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{|} \PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{latitude}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(119182, 40)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des données où la valeur foncière est null}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)} \PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(118329, 40)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des valeurs foncières \PYZlt{} 50KE et \PYZgt{}3000KE}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{\PYZlt{}}\PY{l+m+mi}{50000} \PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{\PYZgt{}}\PY{l+m+mi}{3000000} \PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(99469, 40)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des variables qui sont nulles pour 80\PYZpc{} des valeurs}
+\PY{n}{listVariables} \PY{o}{=} \PY{n}{dfDep}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{p}{(}\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{*}\PY{l+m+mf}{0.8}\PY{p}{)}
+\PY{n}{listResultatsVarDrop} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{colname}\PY{p}{,} \PY{n}{serie} \PY{o+ow}{in} \PY{n}{listVariables}\PY{o}{.}\PY{n}{iteritems}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if}\PY{p}{(}\PY{n}{serie} \PY{o}{==} \PY{k+kc}{True}\PY{p}{)}\PY{p}{:}
+            \PY{n}{listResultatsVarDrop}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{colname}\PY{p}{)}
+\PY{n}{listResultatsVarDrop}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{listResultatsVarDrop}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(99469, 23)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Conversion des objets en string}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}nom\PYZus{}voie}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}nom\PYZus{}voie}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{string}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}numero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}numero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{string}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nom\PYZus{}commune}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nom\PYZus{}commune}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{string}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}complete}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}numero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}nom\PYZus{}voie}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ , }\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nom\PYZus{}commune}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des données où le type de local est une dépendance}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{type\PYZus{}local}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dépendance}\PY{l+s+s1}{\PYZsq{}} \PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(59687, 24)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+         id\_mutation date\_mutation  numero\_disposition nature\_mutation  \textbackslash{}
+1379722  2022-514000    2022-01-04                   1           Vente
+1379723  2022-514000    2022-01-04                   1           Vente
+1379725  2022-514001    2022-01-06                   1           Vente
+1379732  2022-514004    2022-01-05                   1           Vente
+1379734  2022-514005    2022-01-05                   1           Vente
+1379736  2022-514006    2022-01-07                   1           Vente
+1379738  2022-514007    2022-01-06                   1           Vente
+1379739  2022-514008    2022-01-04                   1           Vente
+1379740  2022-514009    2022-01-04                   1           Vente
+1379742  2022-514010    2022-01-06                   1           Vente
+
+         valeur\_fonciere adresse\_numero         adresse\_nom\_voie  \textbackslash{}
+1379722         580000.0           13.0             RUE DE SOFIA
+1379723         580000.0           13.0             RUE DE SOFIA
+1379725         605000.0           51.0              RUE CHARLOT
+1379732         716250.0            6.0        RUE PAUL ESCUDIER
+1379734         320000.0            4.0    RUE DU CHATEAU LANDON
+1379736         320000.0          134.0              AV GAMBETTA
+1379738         220000.0            9.0  RUE ELYSEE MENILMONTANT
+1379739         280000.0           18.0            RUE DES HAIES
+1379740         200000.0          195.0            RUE DE CRIMEE
+1379742         677500.0           79.0      RUE DES GRAVILLIERS
+
+        adresse\_code\_voie  code\_postal code\_commune  {\ldots} lot1\_surface\_carrez  \textbackslash{}
+1379722              9002      75018.0        75118  {\ldots}                 NaN
+1379723              9002      75018.0        75118  {\ldots}               61.00
+1379725              1880      75003.0        75103  {\ldots}               40.66
+1379732              7155      75009.0        75109  {\ldots}                 NaN
+1379734              1924      75010.0        75110  {\ldots}                 NaN
+1379736              3933      75020.0        75120  {\ldots}               32.52
+1379738              3192      75020.0        75120  {\ldots}               34.53
+1379739              4452      75020.0        75120  {\ldots}               24.59
+1379740              2443      75019.0        75119  {\ldots}               27.64
+1379742              4302      75003.0        75103  {\ldots}               57.12
+
+        lot2\_numero nombre\_lots code\_type\_local   type\_local  \textbackslash{}
+1379722          56           2             2.0  Appartement
+1379723          58           3             2.0  Appartement
+1379725         NaN           1             2.0  Appartement
+1379732           3           3             2.0  Appartement
+1379734          92           2             2.0  Appartement
+1379736          50           2             2.0  Appartement
+1379738          24           2             2.0  Appartement
+1379739          83           2             2.0  Appartement
+1379740          54           2             2.0  Appartement
+1379742           4           2             2.0  Appartement
+
+        surface\_reelle\_bati  nombre\_pieces\_principales  longitude   latitude  \textbackslash{}
+1379722                20.0                        2.0   2.348168  48.884490
+1379723                25.0                        2.0   2.348168  48.884490
+1379725                42.0                        3.0   2.362871  48.863374
+1379732                69.0                        3.0   2.332324  48.880353
+1379734                33.0                        2.0   2.362613  48.879658
+1379736                29.0                        1.0   2.405513  48.872782
+1379738                36.0                        2.0   2.386648  48.869335
+1379739                28.0                        2.0   2.400622  48.852508
+1379740                27.0                        2.0   2.375845  48.891167
+1379742                58.0                        3.0   2.353479  48.864674
+
+                                          adresse\_complete
+1379722       13.0 RUE DE SOFIA , Paris 18e Arrondissement
+1379723       13.0 RUE DE SOFIA , Paris 18e Arrondissement
+1379725         51.0 RUE CHARLOT , Paris 3e Arrondissement
+1379732    6.0 RUE PAUL ESCUDIER , Paris 9e Arrondissement
+1379734  4.0 RUE DU CHATEAU LANDON , Paris 10e Arrondis{\ldots}
+1379736       134.0 AV GAMBETTA , Paris 20e Arrondissement
+1379738  9.0 RUE ELYSEE MENILMONTANT , Paris 20e Arrond{\ldots}
+1379739      18.0 RUE DES HAIES , Paris 20e Arrondissement
+1379740     195.0 RUE DE CRIMEE , Paris 19e Arrondissement
+1379742  79.0 RUE DES GRAVILLIERS , Paris 3e Arrondisse{\ldots}
+
+[10 rows x 24 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{AggregationSimilarData}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{p}{:}
+    
+    \PY{c+c1}{\PYZsh{} Construction d\PYZsq{}un dictionnaire }
+    \PY{c+c1}{\PYZsh{} où la clé est la chaine de caractère qui permet d\PYZsq{}indiquer que deux lignes sont similaires}
+    \PY{c+c1}{\PYZsh{} où la valeur est l\PYZsq{}index dans le dataframe initial}
+    \PY{n}{dict\PYZus{}similarData} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+    \PY{k}{for} \PY{n}{index}\PY{p}{,}\PY{n}{series} \PY{o+ow}{in} \PY{n}{df}\PY{o}{.}\PY{n}{iterrows}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{keyRow} \PY{o}{=} \PY{n+nb}{str}\PY{p}{(}\PY{n}{series}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date\PYZus{}mutation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{series}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n}{series}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}complete}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        \PY{k}{if} \PY{n}{keyRow} \PY{o+ow}{in} \PY{n}{dict\PYZus{}similarData}\PY{p}{:}
+            \PY{n}{listIndexSimilaire} \PY{o}{=} \PY{n}{dict\PYZus{}similarData}\PY{p}{[}\PY{n}{keyRow}\PY{p}{]}
+            \PY{n}{listIndexSimilaire}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{index}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{listKeyRow} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+            \PY{n}{listKeyRow}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{index}\PY{p}{)}
+            \PY{n}{dict\PYZus{}similarData}\PY{p}{[}\PY{n}{keyRow}\PY{p}{]} \PY{o}{=} \PY{n}{listKeyRow}
+    
+    \PY{c+c1}{\PYZsh{}Suppression des valeurs dupliquées en prenant comme surface\PYZus{}reelle\PYZus{}bati le cumulé des surfaces}
+    \PY{n}{listIndexASupprimer} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{cle}\PY{p}{,}\PY{n}{listIndex} \PY{o+ow}{in} \PY{n}{dict\PYZus{}similarData}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{listIndex}\PY{p}{)}\PY{o}{\PYZgt{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+            \PY{n}{valSurfaceAgregee} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{at}\PY{p}{[}\PY{n}{listIndex}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+            \PY{n}{val} \PY{o}{=} \PY{l+m+mi}{1}
+            \PY{k}{while} \PY{p}{(}\PY{n}{val} \PY{o}{!=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{listIndex}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{n}{listIndexASupprimer}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{listIndex}\PY{p}{[}\PY{n}{val}\PY{p}{]}\PY{p}{)}
+                \PY{n}{valSurfaceAgregee} \PY{o}{+}\PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{at}\PY{p}{[}\PY{n}{listIndex}\PY{p}{[}\PY{n}{val}\PY{p}{]}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+                \PY{n}{val} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+            \PY{n}{df}\PY{o}{.}\PY{n}{at}\PY{p}{[}\PY{n}{listIndex}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{valSurfaceAgregee}
+    \PY{c+c1}{\PYZsh{}print(listIndexASupprimer)}
+    \PY{n}{df}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{listIndexASupprimer}\PY{p}{,} \PY{n}{inplace} \PY{o}{=} \PY{k+kc}{True}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{gestion-des-doublons}{%
+\subsection{Gestion des doublons}\label{gestion-des-doublons}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{AggregationSimilarData}\PY{p}{(}\PY{n}{dfDep}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+(54289, 24)
+    \end{Verbatim}
+
+    \hypertarget{gestion-des-variables-catuxe9gorielles}{%
+\subsection{Gestion des variables
+catégorielles}\label{gestion-des-variables-catuxe9gorielles}}
+
+On regarde les valeurs uniques pour identifier les variables
+catégorielles
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{colname}\PY{p}{,} \PY{n}{serie} \PY{o+ow}{in} \PY{n}{dfDep}\PY{o}{.}\PY{n}{iteritems}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{colname} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ has }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{serie}\PY{o}{.}\PY{n}{drop\PYZus{}duplicates}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ unique values.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+id\_mutation has 54084 unique values.
+date\_mutation has 453 unique values.
+numero\_disposition has 3 unique values.
+nature\_mutation has 5 unique values.
+valeur\_fonciere has 15118 unique values.
+adresse\_numero has 376 unique values.
+adresse\_nom\_voie has 3429 unique values.
+adresse\_code\_voie has 3419 unique values.
+code\_postal has 21 unique values.
+code\_commune has 20 unique values.
+nom\_commune has 20 unique values.
+code\_departement has 1 unique values.
+id\_parcelle has 25386 unique values.
+lot1\_numero has 1872 unique values.
+lot1\_surface\_carrez has 10423 unique values.
+lot2\_numero has 1875 unique values.
+nombre\_lots has 18 unique values.
+code\_type\_local has 4 unique values.
+type\_local has 4 unique values.
+surface\_reelle\_bati has 497 unique values.
+nombre\_pieces\_principales has 16 unique values.
+longitude has 22986 unique values.
+latitude has 21254 unique values.
+adresse\_complete has 26739 unique values.
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nature\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nature\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{type\PYZus{}local}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{type\PYZus{}local}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nombre\PYZus{}pieces\PYZus{}principales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nombre\PYZus{}pieces\PYZus{}principales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nom\PYZus{}commune}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nom\PYZus{}commune}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Suppression des variables qui semblent inutiles}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{code\PYZus{}departement}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{code\PYZus{}postal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adresse\PYZus{}code\PYZus{}voie}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{code\PYZus{}commune}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{id\PYZus{}parcelle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lot1\PYZus{}numero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lot2\PYZus{}numero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{code\PYZus{}type\PYZus{}local}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(54289, 16)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{typage-des-variables}{%
+\subsection{Typage des variables}\label{typage-des-variables}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date\PYZus{}mutation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date\PYZus{}mutation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n+nb}{format}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 54289 entries, 1379722 to 4375222
+Data columns (total 16 columns):
+ \#   Column                     Non-Null Count  Dtype
+---  ------                     --------------  -----
+ 0   id\_mutation                54289 non-null  object
+ 1   date\_mutation              54289 non-null  datetime64[ns]
+ 2   numero\_disposition         54289 non-null  int64
+ 3   nature\_mutation            54289 non-null  category
+ 4   valeur\_fonciere            54289 non-null  float64
+ 5   adresse\_numero             54288 non-null  string
+ 6   adresse\_nom\_voie           54288 non-null  string
+ 7   nom\_commune                54289 non-null  category
+ 8   lot1\_surface\_carrez        32599 non-null  float64
+ 9   nombre\_lots                54289 non-null  int64
+ 10  type\_local                 53930 non-null  category
+ 11  surface\_reelle\_bati        53912 non-null  float64
+ 12  nombre\_pieces\_principales  53929 non-null  category
+ 13  longitude                  54289 non-null  float64
+ 14  latitude                   54289 non-null  float64
+ 15  adresse\_complete           54288 non-null  string
+dtypes: category(4), datetime64[ns](1), float64(5), int64(2), object(1),
+string(3)
+memory usage: 5.6+ MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Conversion des objets en string}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{id\PYZus{}mutation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{id\PYZus{}mutation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{string}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 54289 entries, 1379722 to 4375222
+Data columns (total 16 columns):
+ \#   Column                     Non-Null Count  Dtype
+---  ------                     --------------  -----
+ 0   id\_mutation                54289 non-null  string
+ 1   date\_mutation              54289 non-null  datetime64[ns]
+ 2   numero\_disposition         54289 non-null  int64
+ 3   nature\_mutation            54289 non-null  category
+ 4   valeur\_fonciere            54289 non-null  float64
+ 5   adresse\_numero             54288 non-null  string
+ 6   adresse\_nom\_voie           54288 non-null  string
+ 7   nom\_commune                54289 non-null  category
+ 8   lot1\_surface\_carrez        32599 non-null  float64
+ 9   nombre\_lots                54289 non-null  int64
+ 10  type\_local                 53930 non-null  category
+ 11  surface\_reelle\_bati        53912 non-null  float64
+ 12  nombre\_pieces\_principales  53929 non-null  category
+ 13  longitude                  54289 non-null  float64
+ 14  latitude                   54289 non-null  float64
+ 15  adresse\_complete           54288 non-null  string
+dtypes: category(4), datetime64[ns](1), float64(5), int64(2), string(4)
+memory usage: 5.6 MB
+    \end{Verbatim}
+
+    \hypertarget{exploration}{%
+\section{Exploration}\label{exploration}}
+
+\hypertarget{description-univariuxe9e}{%
+\subsection{Description univariée}\label{description-univariuxe9e}}
+
+\hypertarget{la-variable-de-temps}{%
+\subsubsection{La variable de temps}\label{la-variable-de-temps}}
+
+On effectue du feature engineering
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{month}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{date\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{x}\PY{o}{.}\PY{n}{month}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{day}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{date\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{x}\PY{o}{.}\PY{n}{day}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{year}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{date\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{x}\PY{o}{.}\PY{n}{year}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{month}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{month}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{day}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{day}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{year}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{year}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ordered}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    On va représenter les variables catégorielles à travers des tableaux de
+contingence ou des bars plots
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{year}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+2021    35393
+2022    18896
+Name: year, dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    On observe qu'on a pratiquement le double de données entre 2021 et 2022
+ce qui est normal car on a une vision partielle de 2022 avec des données
+jusqu'à Juin
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{month}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}index}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Distribution des dates par mois}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Month}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Count}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_37_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    On retrouve les données partielles. Par contre, il apparait difficile de
+faire des conclusions sur les mois hormi que le mois d'août semble
+relativement faible ce qui peut s'expliquer car les personnes sont en
+vacances
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{day}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}index}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Distribution des dates par jour}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Day}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Count}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_40_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Il semblerait qu'il y ait plus de ventes en milieu et fin de mois
+
+    \hypertarget{la-cible-de-notre-moduxe8le}{%
+\subsubsection{La cible de notre
+modèle}\label{la-cible-de-notre-moduxe8le}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    5.428900e+04
+mean     6.115892e+05
+std      4.902127e+05
+min      5.000000e+04
+25\%      2.920000e+05
+50\%      4.585697e+05
+75\%      7.550000e+05
+max      3.000000e+06
+Name: valeur\_fonciere, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot:xlabel='valeur\_fonciere'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_44_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    On a clairement des problèmes d'échelle avec des outliers à supprimer
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Methode Remove outliers pour une loi biaisée}
+\PY{k}{def} \PY{n+nf}{removeOutliers}\PY{p}{(}\PY{n}{variable}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{avant }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+    \PY{n}{Q1} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{n}{variable}\PY{p}{]}\PY{o}{.}\PY{n}{quantile}\PY{p}{(}\PY{l+m+mf}{0.25}\PY{p}{)}
+    \PY{n}{Q3} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{n}{variable}\PY{p}{]}\PY{o}{.}\PY{n}{quantile}\PY{p}{(}\PY{l+m+mf}{0.75}\PY{p}{)}
+    \PY{n}{IQR} \PY{o}{=} \PY{n}{Q3} \PY{o}{\PYZhy{}} \PY{n}{Q1}
+    \PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{variable}\PY{p}{]}\PY{o}{\PYZlt{}}\PY{n}{Q1} \PY{o}{\PYZhy{}} \PY{l+m+mf}{1.5}\PY{o}{*}\PY{n}{IQR}\PY{p}{)} \PY{o}{|} \PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{variable}\PY{p}{]}\PY{o}{\PYZgt{}}\PY{n}{Q3} \PY{o}{+} \PY{l+m+mf}{1.5}\PY{o}{*}\PY{n}{IQR}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{après }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{removeOutliers}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+avant  (54289, 19)
+après  (50446, 19)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Methode Remove outliers par une loi normale}
+\PY{c+c1}{\PYZsh{}Mean = dfDep[\PYZsq{}valeur\PYZus{}fonciere\PYZsq{}].mean()}
+\PY{c+c1}{\PYZsh{}StandardDeviation = dfDep[\PYZsq{}valeur\PYZus{}fonciere\PYZsq{}].std()}
+\PY{c+c1}{\PYZsh{}dfDep.drop(dfDep[(dfDep[\PYZsq{}valeur\PYZus{}fonciere\PYZsq{}]\PYZlt{}Mean \PYZhy{} 3*StandardDeviation) | (dfDep[\PYZsq{}valeur\PYZus{}fonciere\PYZsq{}]\PYZgt{}Mean + 3*StandardDeviation)].index, inplace=True)}
+\PY{c+c1}{\PYZsh{}dfDep.shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valeur\PYZus{}fonciere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    5.044600e+04
+mean     5.078709e+05
+std      3.049878e+05
+min      5.000000e+04
+25\%      2.800000e+05
+50\%      4.300000e+05
+75\%      6.700000e+05
+max      1.449300e+06
+Name: valeur\_fonciere, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_49_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{les-autres-variables-quantitatives}{%
+\subsubsection{Les autres variables
+quantitatives}\label{les-autres-variables-quantitatives}}
+
+    Regardons les variables abérrantes sur les max sur les m2 et mettons une
+valeur max à 500 m2
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}dfDep.drop(dfDep[dfDep[\PYZsq{}surface\PYZus{}reelle\PYZus{}bati\PYZsq{}]\PYZgt{}500].index, inplace=True, axis=0)}
+\PY{c+c1}{\PYZsh{}dfDep.drop(dfDep[dfDep[\PYZsq{}lot1\PYZus{}surface\PYZus{}carrez\PYZsq{}]\PYZgt{}500].index, inplace=True, axis=0)}
+\PY{c+c1}{\PYZsh{}dfDep.shape}
+\PY{c+c1}{\PYZsh{}removeOutliers(\PYZsq{}surface\PYZus{}reelle\PYZus{}bati\PYZsq{})}
+\PY{c+c1}{\PYZsh{}dfDep.describe()}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}removeOutliers(\PYZsq{}lot1\PYZus{}surface\PYZus{}carrez\PYZsq{})}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       numero\_disposition  valeur\_fonciere  lot1\_surface\_carrez   nombre\_lots  \textbackslash{}
+count        50446.000000     5.044600e+04         30741.000000  50446.000000
+mean             1.002795     5.078709e+05            45.776034      1.675534
+std              0.053541     3.049878e+05            61.569145      0.824916
+min              1.000000     5.000000e+04             1.000000      0.000000
+25\%              1.000000     2.800000e+05            25.580000      1.000000
+50\%              1.000000     4.300000e+05            38.750000      2.000000
+75\%              1.000000     6.700000e+05            59.270000      2.000000
+max              3.000000     1.449300e+06          7392.000000     34.000000
+
+       surface\_reelle\_bati     longitude      latitude
+count         50112.000000  50446.000000  50446.000000
+mean             51.898567      2.342636     48.862166
+std              66.661178      0.037447      0.020222
+min               2.000000      2.255896     48.818759
+25\%              28.000000      2.316022     48.845022
+50\%              43.000000      2.345814     48.862759
+75\%              65.000000      2.373166     48.880174
+max            7842.000000      2.412825     48.900565
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prix m2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{/}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{prix m2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prix m2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count     50112.000000
+mean      10639.642826
+std        3691.344154
+min          24.323322
+25\%        9000.000000
+50\%       10557.634033
+75\%       12117.835294
+max      130000.000000
+Name: prix m2, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_55_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{removeOutliers}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prix m2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+avant  (50446, 20)
+après  (47154, 20)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prix m2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{/}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{prix m2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       numero\_disposition  valeur\_fonciere  lot1\_surface\_carrez   nombre\_lots  \textbackslash{}
+count        47154.000000     4.715400e+04         29010.000000  47154.000000
+mean             1.002312     5.095385e+05            45.737030      1.679751
+std              0.048899     2.988223e+05            62.355009      0.779361
+min              1.000000     5.000000e+04             1.000000      0.000000
+25\%              1.000000     2.870000e+05            25.840000      1.000000
+50\%              1.000000     4.330000e+05            38.940000      2.000000
+75\%              1.000000     6.686625e+05            59.220000      2.000000
+max              3.000000     1.449300e+06          7392.000000     16.000000
+
+       surface\_reelle\_bati     longitude      latitude       prix m2
+count         46820.000000  47154.000000  47154.000000  46820.000000
+mean             49.006279      2.343005     48.862179  10560.249890
+std              28.651969      0.037685      0.020387   2317.756634
+min               4.000000      2.255896     48.818759   4326.923077
+25\%              28.000000      2.316104     48.844722   9146.073718
+50\%              42.000000      2.346336     48.862890  10566.666667
+75\%              64.000000      2.373824     48.880446  12000.000000
+max             300.000000      2.412825     48.900565  16791.044776
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_57_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{removeOutliers}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lot1\PYZus{}surface\PYZus{}carrez}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lot1\PYZus{}surface\PYZus{}carrez}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+avant  (47154, 20)
+après  (46482, 20)
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       numero\_disposition  valeur\_fonciere  lot1\_surface\_carrez   nombre\_lots  \textbackslash{}
+count        46482.000000     4.648200e+04         28338.000000  46482.000000
+mean             1.002302     4.996812e+05            43.209783      1.676864
+std              0.048814     2.883507e+05            23.095905      0.774179
+min              1.000000     5.000000e+04             1.000000      0.000000
+25\%              1.000000     2.850000e+05            25.530000      1.000000
+50\%              1.000000     4.290000e+05            38.160000      2.000000
+75\%              1.000000     6.530150e+05            57.170000      2.000000
+max              3.000000     1.449200e+06           109.270000     16.000000
+
+       surface\_reelle\_bati     longitude      latitude       prix m2
+count         46149.000000  46482.000000  46482.000000  46149.000000
+mean             47.905610      2.343216     48.862159  10570.283401
+std              27.152457      0.037587      0.020415   2317.846738
+min               4.000000      2.255896     48.818759   4326.923077
+25\%              28.000000      2.316626     48.844628   9155.172414
+50\%              42.000000      2.346446     48.862869  10573.333333
+75\%              63.000000      2.373929     48.880462  12000.000000
+max             300.000000      2.412825     48.900565  16791.044776
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_58_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Les données sur les variables quantitatives semblent cohérentes en terme
+de grandeur suite à différentes suppressions des données atypiques.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{41}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prix m2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{les-variables-catuxe9gorielles}{%
+\subsubsection{Les variables
+catégorielles}\label{les-variables-catuxe9gorielles}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{42}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nature\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}index}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Distribution selon les natures de mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nature mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Count}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_62_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    La plupart des biens sont des ventes. On va pouvoir supprimer cette
+variable
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{43}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nature\PYZus{}mutation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{44}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{type\PYZus{}local}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}index}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Distribution selon le type local}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{type local}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Count}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_65_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    On peut se poser la question de la pertinence de cette variable car on a
+essentiellement deux modalités qui jouent
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nombre\PYZus{}pieces\PYZus{}principales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+2.0     16205
+1.0     12097
+3.0     10428
+4.0      3958
+0.0      2512
+5.0       846
+6.0        89
+7.0        13
+8.0         6
+9.0         1
+10.0        1
+13.0        1
+15.0        1
+17.0        1
+11.0        0
+Name: nombre\_pieces\_principales, dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Ce champs apparait mal instancié avec des valeurs abberantes
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{46}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nombre\PYZus{}pieces\PYZus{}principales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{47}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nom\PYZus{}commune}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{47}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Paris 18e Arrondissement    5247
+Paris 15e Arrondissement    5173
+Paris 11e Arrondissement    4162
+Paris 17e Arrondissement    3960
+Paris 20e Arrondissement    3318
+Paris 16e Arrondissement    3209
+Paris 19e Arrondissement    2845
+Paris 12e Arrondissement    2785
+Paris 10e Arrondissement    2691
+Paris 14e Arrondissement    2493
+Paris 13e Arrondissement    2410
+Paris 9e Arrondissement     1811
+Paris 5e Arrondissement     1181
+Paris 3e Arrondissement      956
+Paris 7e Arrondissement      882
+Paris 6e Arrondissement      798
+Paris 8e Arrondissement      743
+Paris 2e Arrondissement      740
+Paris 4e Arrondissement      676
+Paris 1er Arrondissement     402
+Name: nom\_commune, dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{conclusion-sur-lanalyse-univariuxe9e}{%
+\subsubsection{Conclusion sur l'analyse
+univariée}\label{conclusion-sur-lanalyse-univariuxe9e}}
+
+On a pu voir que : * le jeu de données est constituée d'un an et demi
+d'historique * la target a été retravaillé pour éliminer les valeurs
+aberrantes. Il reste néanmoins des points atypiques sur le boxplot * on
+a rationnalisé certaines variables en enlevant des valeurs aberrantes ou
+en les éliminant de l'analyse pour certaines varaibles catégorielles. *
+on a introduit du feature ingeenering sur les dates
+
+    \hypertarget{analyse-bivariuxe9e}{%
+\subsection{Analyse bivariée}\label{analyse-bivariuxe9e}}
+
+L'analyse bivariée va consister à regarder l'influence de différentes
+variables sur la variable cible.
+
+\hypertarget{les-variables-catuxe9gorielles}{%
+\subsubsection{Les variables
+catégorielles}\label{les-variables-catuxe9gorielles}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{48}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{catplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{month}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{box}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{dfDep}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{48}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<seaborn.axisgrid.FacetGrid at 0x16f219ac430>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_73_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Que cela soit en comparant month, year, day, les niveaux semblent
+relativement identiques mais on a beaucoup de points atypiques
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{49}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{catplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{type\PYZus{}local}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{box}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{dfDep}\PY{p}{,} \PY{n}{orient}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{v}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{49}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<seaborn.axisgrid.FacetGrid at 0x16f1f866ca0>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_75_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    On peut constater que le prix des maisons est plus élevé que locaux
+industriels qui sont eux-mêmes à un niveau équivalent par rapport aux
+appartements en moyenne
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{50}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{catplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nom\PYZus{}commune}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{box}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{orient}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{v}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{data}\PY{o}{=}\PY{n}{dfDep}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{50}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<seaborn.axisgrid.FacetGrid at 0x16f234aa040>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_77_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Les arrondissements semblent avoir un effet sur les prix
+
+    \hypertarget{les-variables-quantitatives}{%
+\subsubsection{Les variables
+quantitatives}\label{les-variables-quantitatives}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 46482 entries, 1379722 to 4375222
+Data columns (total 17 columns):
+ \#   Column               Non-Null Count  Dtype
+---  ------               --------------  -----
+ 0   id\_mutation          46482 non-null  string
+ 1   date\_mutation        46482 non-null  datetime64[ns]
+ 2   numero\_disposition   46482 non-null  int64
+ 3   valeur\_fonciere      46482 non-null  float64
+ 4   adresse\_numero       46481 non-null  string
+ 5   adresse\_nom\_voie     46481 non-null  string
+ 6   nom\_commune          46482 non-null  category
+ 7   lot1\_surface\_carrez  28338 non-null  float64
+ 8   nombre\_lots          46482 non-null  int64
+ 9   type\_local           46159 non-null  category
+ 10  surface\_reelle\_bati  46149 non-null  float64
+ 11  longitude            46482 non-null  float64
+ 12  latitude             46482 non-null  float64
+ 13  adresse\_complete     46481 non-null  string
+ 14  month                46482 non-null  category
+ 15  day                  46482 non-null  category
+ 16  year                 46482 non-null  category
+dtypes: category(5), datetime64[ns](1), float64(5), int64(2), string(4)
+memory usage: 4.8 MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{52}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,}\PY{p}{(}\PY{n}{ax1}\PY{p}{,}\PY{n}{ax2}\PY{p}{,}\PY{n}{ax3}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{ncols}\PY{o}{=}\PY{l+m+mi}{3}\PY{p}{)}
+\PY{n}{fig}\PY{o}{.}\PY{n}{set\PYZus{}size\PYZus{}inches}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{regplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lot1\PYZus{}surface\PYZus{}carrez}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{data}\PY{o}{=}\PY{n}{dfDep}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax1}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{regplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nombre\PYZus{}lots}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{data}\PY{o}{=}\PY{n}{dfDep}\PY{p}{,}\PY{n}{ax}\PY{o}{=}\PY{n}{ax2}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{regplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{data}\PY{o}{=}\PY{n}{dfDep}\PY{p}{,}\PY{n}{ax}\PY{o}{=}\PY{n}{ax3}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}sns.regplot(x=\PYZdq{}Prix m2\PYZdq{},y=\PYZdq{}valeur\PYZus{}fonciere\PYZdq{},data=dfDep,ax=ax4)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{52}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot:xlabel='surface\_reelle\_bati', ylabel='valeur\_fonciere'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_81_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    La valeur foncière augmente avec la surface, le nombre de lots, la
+surface réelle.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{dfDep}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{YlOrRd}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Corrélations des variables continues}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_83_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                     numero\_disposition  valeur\_fonciere  lot1\_surface\_carrez  \textbackslash{}
+numero\_disposition             1.000000         0.024541             0.031832
+valeur\_fonciere                0.024541         1.000000             0.909703
+lot1\_surface\_carrez            0.031832         0.909703             1.000000
+nombre\_lots                   -0.000242         0.227670             0.235166
+surface\_reelle\_bati            0.031681         0.876837             0.915587
+longitude                     -0.017176        -0.172863            -0.098811
+latitude                       0.001994        -0.042408            -0.036007
+
+                     nombre\_lots  surface\_reelle\_bati  longitude  latitude
+numero\_disposition     -0.000242             0.031681  -0.017176  0.001994
+valeur\_fonciere         0.227670             0.876837  -0.172863 -0.042408
+lot1\_surface\_carrez     0.235166             0.915587  -0.098811 -0.036007
+nombre\_lots             1.000000             0.227450   0.009932  0.003212
+surface\_reelle\_bati     0.227450             1.000000  -0.106381 -0.041606
+longitude               0.009932            -0.106381   1.000000  0.113772
+latitude                0.003212            -0.041606   0.113772  1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    La valeur foncière est fortement corrélée à la surface carrez ou réelle,
+faiblement au nombre de lots et aux coordonnées gps
+
+    \hypertarget{conclusion-sur-lanalyse-bivariuxe9e}{%
+\subsubsection{Conclusion sur l'analyse
+bivariée}\label{conclusion-sur-lanalyse-bivariuxe9e}}
+
+La target est sensible : * à la surface réelle ou carrez * au prix du m2
+* à la commune Par contre, elle ne semble pas tellement sensible au
+mois, jour, année. La difficulté vient surtout du nombre de points
+atypiques importants.
+
+    \hypertarget{analyse-multivariuxe9e}{%
+\subsection{Analyse multivariée}\label{analyse-multivariuxe9e}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}sns.relplot(x=\PYZdq{}lot1\PYZus{}surface\PYZus{}carrez\PYZdq{}, y=\PYZdq{}surface\PYZus{}reelle\PYZus{}bati\PYZdq{}, size=\PYZdq{}valeur\PYZus{}fonciere\PYZdq{}, sizes=(15, 100), data=dfDep);}
+\PY{c+c1}{\PYZsh{}sns.catplot(x=\PYZdq{}lot1\PYZus{}surface\PYZus{}carrez\PYZdq{}, y=\PYZdq{}valeur\PYZus{}fonciere\PYZdq{}, hue=\PYZdq{}type\PYZus{}local\PYZdq{},kind=\PYZdq{}bar\PYZdq{},data=dfDep);}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{modelisation}{%
+\section{Modelisation}\label{modelisation}}
+
+    \hypertarget{preprocessing-pour-scikit-learn}{%
+\subsection{Preprocessing pour
+scikit-learn¶}\label{preprocessing-pour-scikit-learn}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{55}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 46482 entries, 1379722 to 4375222
+Data columns (total 17 columns):
+ \#   Column               Non-Null Count  Dtype
+---  ------               --------------  -----
+ 0   id\_mutation          46482 non-null  string
+ 1   date\_mutation        46482 non-null  datetime64[ns]
+ 2   numero\_disposition   46482 non-null  int64
+ 3   valeur\_fonciere      46482 non-null  float64
+ 4   adresse\_numero       46481 non-null  string
+ 5   adresse\_nom\_voie     46481 non-null  string
+ 6   nom\_commune          46482 non-null  category
+ 7   lot1\_surface\_carrez  28338 non-null  float64
+ 8   nombre\_lots          46482 non-null  int64
+ 9   type\_local           46159 non-null  category
+ 10  surface\_reelle\_bati  46149 non-null  float64
+ 11  longitude            46482 non-null  float64
+ 12  latitude             46482 non-null  float64
+ 13  adresse\_complete     46481 non-null  string
+ 14  month                46482 non-null  category
+ 15  day                  46482 non-null  category
+ 16  year                 46482 non-null  category
+dtypes: category(5), datetime64[ns](1), float64(5), int64(2), string(4)
+memory usage: 4.8 MB
+    \end{Verbatim}
+
+    \hypertarget{gestion-des-donnuxe9es-manquantes}{%
+\subsubsection{Gestion des données
+manquantes}\label{gestion-des-donnuxe9es-manquantes}}
+
+Les méthodes numériques d'apprentissage ne gèrent pas les NaN ou null
+sur les valeurs numériques
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{56}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{isna}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{56}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+id\_mutation                0
+date\_mutation              0
+numero\_disposition         0
+valeur\_fonciere            0
+adresse\_numero             1
+adresse\_nom\_voie           1
+nom\_commune                0
+lot1\_surface\_carrez    18144
+nombre\_lots                0
+type\_local               323
+surface\_reelle\_bati      333
+longitude                  0
+latitude                   0
+adresse\_complete           1
+month                      0
+day                        0
+year                       0
+dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lot1\PYZus{}surface\PYZus{}carrez}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{dfDep}\PY{p}{[}\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{surface\PYZus{}reelle\PYZus{}bati}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{isna}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{58}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{o}{.}\PY{n}{isna}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{58}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+id\_mutation            0
+date\_mutation          0
+numero\_disposition     0
+valeur\_fonciere        0
+adresse\_numero         0
+adresse\_nom\_voie       0
+nom\_commune            0
+nombre\_lots            0
+type\_local             0
+surface\_reelle\_bati    0
+longitude              0
+latitude               0
+adresse\_complete       0
+month                  0
+day                    0
+year                   0
+dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{construction-des-ensembles-x-et-y-uxe0-partir-du-dataframe}{%
+\subsubsection{Construction des ensembles X et y à partir du
+dataframe}\label{construction-des-ensembles-x-et-y-uxe0-partir-du-dataframe}}
+
+    On peut enlever l'id qui est un champ purement technique ainsi que la
+date et tous les éléments de type string
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{59}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{id\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{drop\PYZus{}duplicates}\PY{p}{(}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{dfDep}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+(46149, 16)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{60}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X} \PY{o}{=} \PY{n}{dfDep}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{id\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{date\PYZus{}mutation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{numero\PYZus{}disposition}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{adresse\PYZus{}numero}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{adresse\PYZus{}nom\PYZus{}voie}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{adresse\PYZus{}complete}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{dfDep}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{valeur\PYZus{}fonciere}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape de X : }\PY{l+s+si}{\PYZob{}}\PY{n}{X}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape de y : }\PY{l+s+si}{\PYZob{}}\PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{X}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Shape de X : (46149, 9)
+Shape de y : (46149,)
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{60}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                      nom\_commune  nombre\_lots   type\_local  \textbackslash{}
+1379722  Paris 18e Arrondissement            2  Appartement
+1379725   Paris 3e Arrondissement            1  Appartement
+1379732   Paris 9e Arrondissement            3  Appartement
+1379734  Paris 10e Arrondissement            2  Appartement
+1379736  Paris 20e Arrondissement            2  Appartement
+
+         surface\_reelle\_bati  longitude   latitude month day  year
+1379722                 45.0   2.348168  48.884490     1   4  2022
+1379725                 42.0   2.362871  48.863374     1   6  2022
+1379732                 69.0   2.332324  48.880353     1   5  2022
+1379734                 33.0   2.362613  48.879658     1   5  2022
+1379736                 29.0   2.405513  48.872782     1   7  2022
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{preprocessing-sur-les-variables-catuxe9gorielles}{%
+\subsubsection{Preprocessing sur les variables
+catégorielles}\label{preprocessing-sur-les-variables-catuxe9gorielles}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{61}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{categorical\PYZus{}features} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{n}{X}\PY{o}{.}\PY{n}{dtypes} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{category}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{categorical\PYZus{}features}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+['nom\_commune', 'type\_local', 'month', 'day', 'year']
+    \end{Verbatim}
+
+    Scikit-learn ne reconnait pas les objets de type DataFrame directement,
+notamment les types catégoriels. Il faut donc préparer nos données afin
+que les méthodes de scikit-learn puissent les interpréter. Scikit learn
+requiert un encodage numérique des ces variables. Nous allons donc
+devoir encoder nos variables explicatives catégorielles à l'aide de
+variables indicatrices.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{62}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}dummies} \PY{o}{=}  \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{n}{categorical\PYZus{}features}\PY{p}{]}\PY{p}{,} \PY{n}{drop\PYZus{}first}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{X} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{X}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{categorical\PYZus{}features}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{df\PYZus{}dummies}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{X}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{62}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+         nombre\_lots  surface\_reelle\_bati  longitude   latitude  \textbackslash{}
+1379722            2                 45.0   2.348168  48.884490
+1379725            1                 42.0   2.362871  48.863374
+1379732            3                 69.0   2.332324  48.880353
+1379734            2                 33.0   2.362613  48.879658
+1379736            2                 29.0   2.405513  48.872782
+
+         nom\_commune\_Paris 11e Arrondissement  \textbackslash{}
+1379722                                     0
+1379725                                     0
+1379732                                     0
+1379734                                     0
+1379736                                     0
+
+         nom\_commune\_Paris 12e Arrondissement  \textbackslash{}
+1379722                                     0
+1379725                                     0
+1379732                                     0
+1379734                                     0
+1379736                                     0
+
+         nom\_commune\_Paris 13e Arrondissement  \textbackslash{}
+1379722                                     0
+1379725                                     0
+1379732                                     0
+1379734                                     0
+1379736                                     0
+
+         nom\_commune\_Paris 14e Arrondissement  \textbackslash{}
+1379722                                     0
+1379725                                     0
+1379732                                     0
+1379734                                     0
+1379736                                     0
+
+         nom\_commune\_Paris 15e Arrondissement  \textbackslash{}
+1379722                                     0
+1379725                                     0
+1379732                                     0
+1379734                                     0
+1379736                                     0
+
+         nom\_commune\_Paris 16e Arrondissement  {\ldots}  day\_23  day\_24  day\_25  \textbackslash{}
+1379722                                     0  {\ldots}       0       0       0
+1379725                                     0  {\ldots}       0       0       0
+1379732                                     0  {\ldots}       0       0       0
+1379734                                     0  {\ldots}       0       0       0
+1379736                                     0  {\ldots}       0       0       0
+
+         day\_26  day\_27  day\_28  day\_29  day\_30  day\_31  year\_2022
+1379722       0       0       0       0       0       0          1
+1379725       0       0       0       0       0       0          1
+1379732       0       0       0       0       0       0          1
+1379734       0       0       0       0       0       0          1
+1379736       0       0       0       0       0       0          1
+
+[5 rows x 67 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{train-test}{%
+\subsection{Train, Test}\label{train-test}}
+
+Nous utilisons scikit-learn pour faire le traitement et étant donné la
+volumétrie du jeu de données, nous allons prendre 80\% pour le train et
+20\% pour le test
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{63}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{777}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape du X\PYZus{}train : }\PY{l+s+si}{\PYZob{}}\PY{n}{X\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape du y\PYZus{}train : }\PY{l+s+si}{\PYZob{}}\PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape du X\PYZus{}test : }\PY{l+s+si}{\PYZob{}}\PY{n}{X\PYZus{}test}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape du y\PYZus{}test : }\PY{l+s+si}{\PYZob{}}\PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Shape du X\_train : (36919, 67)
+Shape du y\_train : (36919,)
+Shape du X\_test : (9230, 67)
+Shape du y\_test : (9230,)
+    \end{Verbatim}
+
+    \hypertarget{preprocessing-sur-les-variables-numuxe9riques}{%
+\subsection{Preprocessing sur les variables
+numériques}\label{preprocessing-sur-les-variables-numuxe9riques}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{64}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{numerical\PYZus{}features} \PY{o}{=} \PY{n}{dfDep}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{p}{(}\PY{n}{dfDep}\PY{o}{.}\PY{n}{dtypes} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{int64}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)} \PY{o}{+} \PY{n}{dfDep}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{p}{(}\PY{n}{dfDep}\PY{o}{.}\PY{n}{dtypes} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{float64}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{numerical\PYZus{}features}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+['numero\_disposition', 'nombre\_lots', 'valeur\_fonciere', 'surface\_reelle\_bati',
+'longitude', 'latitude']
+    \end{Verbatim}
+
+    Certaines méthodes d'apprentissage sont sensibles aux problèmes
+d'échelle sur les valeurs numériques. En preprocessing, on standardise
+les variables numériques en retranchant leur moyenne et en divisant par
+l'écart type via Scikit-learn. On réalise ce traitement sur l'ensemble
+d'apprentissage et on applique cette standardisation sur l'ensemble de
+test.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{65}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing} \PY{k+kn}{import} \PY{n}{StandardScaler}
+\PY{n}{scaler} \PY{o}{=} \PY{n}{StandardScaler}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{X\PYZus{}train\PYZus{}scaled} \PY{o}{=} \PY{n}{scaler}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\PY{n}{X\PYZus{}test\PYZus{}scaled} \PY{o}{=} \PY{n}{scaler}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{un-moduxe8le-simple-la-ruxe9gression-linuxe9aire}{%
+\subsection{Un modèle simple : la régression
+linéaire}\label{un-moduxe8le-simple-la-ruxe9gression-linuxe9aire}}
+
+Un premier modèle qui nous servira de \emph{baseline}.
+
+Nous allons aussi introduire l'instanciation sur les données
+\emph{train}, et nous validerons \textbf{ENSUITE} sur les données
+\emph{test}.
+
+\hypertarget{moduxe8le-de-regression-sur-traintest}{%
+\subsubsection{Modèle de regression sur
+Train/Test}\label{moduxe8le-de-regression-sur-traintest}}
+
+\[y =\sum_{i=1}^{n} a_i \times x_i + b\]
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{66}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn} \PY{k+kn}{import} \PY{n}{linear\PYZus{}model}
+\PY{n}{reg} \PY{o}{=} \PY{n}{linear\PYZus{}model}\PY{o}{.}\PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}trainPred} \PY{o}{=} \PY{n}{reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{)}
+\PY{n}{y\PYZus{}testPred} \PY{o}{=} \PY{n}{reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le train : }\PY{l+s+si}{\PYZob{}}\PY{n}{reg}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}train}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le test : }\PY{l+s+si}{\PYZob{}}\PY{n}{reg}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}test}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Score sur le train : 0.8017175728977979
+Score sur le test : 0.8011631121444063
+    \end{Verbatim}
+
+    La régression linéaire donne des résultats et il n'y a pas de phénomène
+de sur-apprentissage.
+
+    \hypertarget{coefficients-de-la-ruxe9gression-linuxe9aire}{%
+\subsection{Coefficients de la régression
+linéaire}\label{coefficients-de-la-ruxe9gression-linuxe9aire}}
+
+Un des avantages de la régression linéaire est que nous pouvons obtenir
+les coefficients associés à chacune des variables. Nous pouvons voir les
+coefficients qui ont un impact sur le nombre de vélos loués.
+
+Regardons ces coefficients :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{67}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{coefficients} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{reg}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{coefficients}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{67}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+surface\_reelle\_bati                                    249572.870033
+nom\_commune\_Paris 6e Arrondissement                     16466.302201
+latitude                                                14105.244694
+nom\_commune\_Paris 5e Arrondissement                     13676.283050
+nom\_commune\_Paris 7e Arrondissement                     13343.601169
+                                                           {\ldots}
+nom\_commune\_Paris 15e Arrondissement                    -5217.255155
+nom\_commune\_Paris 19e Arrondissement                   -11347.416919
+nom\_commune\_Paris 18e Arrondissement                   -12725.454998
+longitude                                              -26494.427558
+type\_local\_Local industriel. commercial ou assimilé    -27947.820593
+Length: 67, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{68}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ordonnee à l}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{origine : }\PY{l+s+si}{\PYZob{}}\PY{n}{reg}\PY{o}{.}\PY{n}{intercept\PYZus{}}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+ordonnee à l'origine : 499534.7393496575
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{coefficients}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{(}\PY{n}{coefficients}\PY{p}{)}\PY{o}{\PYZgt{}}\PY{l+m+mi}{10000}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression lineaire coefficient}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficient value}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_115_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    On retrouve des éléments de l'exploration. Certaines communes tirent le
+prix vers le base comme le 18ème, 19ème au contraire du 6ème, \ldots{}
+L'élément le plus prépondérant est la surface réellement bati. La
+lattitude et la longitude s'opposent en termes d'effet.
+
+    \hypertarget{evaluation-de-la-ruxe9gression-avec-diffuxe9rentes-muxe9triques}{%
+\subsubsection{Evaluation de la régression avec différentes
+métriques}\label{evaluation-de-la-ruxe9gression-avec-diffuxe9rentes-muxe9triques}}
+
+Nous allons regarder quelques métriques associées aux problématiques de
+régression : * L'erreur maximum entre la prédiction et la réalité * La
+moyenne des erreurs absolus entre la prédiction et la réalité * La
+moyenne des erreurs au carré entre la prédiction et la réalité (MSE) *
+Le score R2 qui est le coefficient de détermination en comparant MSE et
+la variance. Fonction renvoyée par la méthode score de Scikit Learn
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{70}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn} \PY{k+kn}{import} \PY{n}{metrics}
+
+
+\PY{k}{def} \PY{n+nf}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}
+        \PY{p}{\PYZob{}}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{max\PYZus{}error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{metrics}\PY{o}{.}\PY{n}{max\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{y}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{y\PYZus{}pred}\PY{p}{)}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}absolute\PYZus{}error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{metrics}\PY{o}{.}\PY{n}{mean\PYZus{}absolute\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{y}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{y\PYZus{}pred}\PY{p}{)}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}squared\PYZus{}error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{metrics}\PY{o}{.}\PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{y}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{y\PYZus{}pred}\PY{p}{)}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r2\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{metrics}\PY{o}{.}\PY{n}{r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{y}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{y\PYZus{}pred}\PY{p}{)}
+        \PY{p}{\PYZcb{}}\PY{p}{,}
+        \PY{n}{index}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{71}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression metrics for train data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}trainPred}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression metrics for test data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}testPred}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Regression metrics for train data
+      max\_error  mean\_absolute\_error  mean\_squared\_error  r2\_score
+0  1.596970e+06         84687.636312        1.653548e+10  0.801718
+Regression metrics for test data
+      max\_error  mean\_absolute\_error  mean\_squared\_error  r2\_score
+0  1.321491e+06         85090.635792        1.620885e+10  0.801163
+    \end{Verbatim}
+
+    Le modèle de regression linéaire n'est pas très bon quelque soit la
+métrique retenue.
+
+    \hypertarget{arbre-de-duxe9cision-et-visions-ensemblistes}{%
+\subsection{Arbre de décision et visions
+ensemblistes}\label{arbre-de-duxe9cision-et-visions-ensemblistes}}
+
+\hypertarget{arbre-de-duxe9cision}{%
+\subsubsection{Arbre de décision}\label{arbre-de-duxe9cision}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{72}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{tree} \PY{k+kn}{import} \PY{n}{DecisionTreeRegressor}
+\PY{n}{decisionTree} \PY{o}{=} \PY{n}{DecisionTreeRegressor}\PY{p}{(}\PY{p}{)}
+\PY{n}{decisionTree}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}trainPred} \PY{o}{=} \PY{n}{decisionTree}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{)}
+\PY{n}{y\PYZus{}testPred} \PY{o}{=} \PY{n}{decisionTree}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le train de l}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{arbre de décision : }\PY{l+s+si}{\PYZob{}}\PY{n}{decisionTree}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}train}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le test de l}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{arbre de décision : }\PY{l+s+si}{\PYZob{}}\PY{n}{decisionTree}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}test}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Score sur le train de l'arbre de décision : 0.9998805881649797
+Score sur le test de l'arbre de décision : 0.7432610064158165
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{73}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression metrics with Decision Tree for train data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}trainPred}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression metrics with Decision Tree for test data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}testPred}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Regression metrics with Decision Tree for train data
+   max\_error  mean\_absolute\_error  mean\_squared\_error  r2\_score
+0   300000.0            64.969443        9.958180e+06  0.999881
+Regression metrics with Decision Tree for test data
+   max\_error  mean\_absolute\_error  mean\_squared\_error  r2\_score
+0   946000.0         97475.687469        2.092894e+10  0.743261
+    \end{Verbatim}
+
+    On est dans un cas de surapprentissage puisque l'arbre de décision
+``fit'' à l'ensemble de train mais ne se généralise pas bien sur
+l'ensemble de test. Néanmoins la performance est moins bonne que la
+régression linéaire
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{74}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature importances : }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{decisionTree}\PY{o}{.}\PY{n}{feature\PYZus{}importances\PYZus{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Feature importances :
+[7.24203099e-03 8.29786055e-01 4.18925665e-02 4.66348159e-02
+ 6.67695212e-04 1.18150928e-04 7.76163497e-04 4.08262587e-04
+ 7.84889388e-04 7.01459265e-04 3.81124735e-04 2.63807564e-04
+ 7.69301917e-05 4.66695105e-04 8.91297788e-04 2.30626244e-04
+ 2.90281190e-04 4.79320086e-04 8.02850151e-04 1.13558807e-03
+ 8.98383096e-04 5.95663078e-04 3.73737532e-04 6.87450761e-03
+ 8.14283687e-04 1.81425646e-03 1.50775843e-03 1.97679818e-03
+ 1.64040197e-03 2.27642287e-03 1.86109849e-03 7.31854835e-04
+ 1.45719587e-03 1.88363398e-03 1.12424481e-03 1.54502644e-03
+ 1.16679892e-03 9.22287403e-04 8.28115801e-04 1.32674090e-03
+ 1.16443121e-03 1.12699776e-03 1.36499948e-03 1.37794852e-03
+ 1.42391302e-03 1.10168192e-03 8.97735692e-04 1.07600888e-03
+ 1.22417400e-03 1.40406454e-03 1.57954947e-03 1.38401471e-03
+ 1.04567914e-03 1.10180426e-03 1.35720554e-03 9.28337909e-04
+ 1.38411118e-03 1.30660494e-03 1.13217292e-03 9.89857433e-04
+ 1.01727895e-03 1.20337627e-03 1.38172305e-03 1.43790008e-03
+ 8.86376639e-04 1.46483530e-03 2.58739624e-03]
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{75}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{plot\PYZus{}feature\PYZus{}importances}\PY{p}{(}\PY{n}{model}\PY{p}{)}\PY{p}{:}
+    \PY{n}{n\PYZus{}features} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{barh}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}features}\PY{p}{)}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{feature\PYZus{}importances\PYZus{}}\PY{p}{,} \PY{n}{align} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{center}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{yticks}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{n}{n\PYZus{}features}\PY{p}{)}\PY{p}{,} \PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature Importance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylim}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{n}{n\PYZus{}features}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{76}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot\PYZus{}feature\PYZus{}importances}\PY{p}{(}\PY{n}{decisionTree}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_127_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{77}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{featuresImportance} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{decisionTree}\PY{o}{.}\PY{n}{feature\PYZus{}importances\PYZus{}}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{featuresImportance}\PY{p}{[}\PY{p}{(}\PY{n}{featuresImportance}\PY{p}{)}\PY{o}{\PYZgt{}}\PY{l+m+mf}{0.03}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature Importance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_128_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    On retrouve la surface réelle et la position géographique du bien.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{78}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{depth} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{:}
+    \PY{n}{decisionTreeMaxDepth} \PY{o}{=} \PY{n}{DecisionTreeRegressor}\PY{p}{(}\PY{n}{max\PYZus{}depth}\PY{o}{=}\PY{n}{depth}\PY{p}{)}
+    \PY{n}{decisionTreeMaxDepth}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Max depth : }\PY{l+s+si}{\PYZob{}}\PY{n}{depth}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le train de l}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{arbre de décision : }\PY{l+s+si}{\PYZob{}}\PY{n}{decisionTreeMaxDepth}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}train}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le test de l}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{arbre de décision : }\PY{l+s+si}{\PYZob{}}\PY{n}{decisionTreeMaxDepth}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}test}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Max depth : 5
+Score sur le train de l'arbre de décision : 0.8287761133628597
+Score sur le test de l'arbre de décision : 0.8216097745011889
+Max depth : 6
+Score sur le train de l'arbre de décision : 0.8375911045161
+Score sur le test de l'arbre de décision : 0.8298781113397137
+Max depth : 7
+Score sur le train de l'arbre de décision : 0.8475715134258025
+Score sur le test de l'arbre de décision : 0.8345602372823613
+Max depth : 8
+Score sur le train de l'arbre de décision : 0.8571520065388156
+Score sur le test de l'arbre de décision : 0.839275099223095
+Max depth : 9
+Score sur le train de l'arbre de décision : 0.8667514157812605
+Score sur le test de l'arbre de décision : 0.8379927811502408
+Max depth : 10
+Score sur le train de l'arbre de décision : 0.8771788808029217
+Score sur le test de l'arbre de décision : 0.8378138986698369
+Max depth : 11
+Score sur le train de l'arbre de décision : 0.8884427238026404
+Score sur le test de l'arbre de décision : 0.8332184373980339
+Max depth : 12
+Score sur le train de l'arbre de décision : 0.9002835113213346
+Score sur le test de l'arbre de décision : 0.827860871670689
+Max depth : 13
+Score sur le train de l'arbre de décision : 0.9126784232754481
+Score sur le test de l'arbre de décision : 0.8184371899148659
+Max depth : 14
+Score sur le train de l'arbre de décision : 0.9248986124917595
+Score sur le test de l'arbre de décision : 0.8073907282473716
+Max depth : 15
+Score sur le train de l'arbre de décision : 0.9360622025943398
+Score sur le test de l'arbre de décision : 0.8011019844075465
+Max depth : 16
+Score sur le train de l'arbre de décision : 0.9465575116161347
+Score sur le test de l'arbre de décision : 0.7943883184687182
+Max depth : 17
+Score sur le train de l'arbre de décision : 0.9559007041620089
+Score sur le test de l'arbre de décision : 0.7843571997819065
+Max depth : 18
+Score sur le train de l'arbre de décision : 0.9638673313927707
+Score sur le test de l'arbre de décision : 0.7741319430495943
+Max depth : 19
+Score sur le train de l'arbre de décision : 0.9706319172890191
+Score sur le test de l'arbre de décision : 0.7741276562077122
+    \end{Verbatim}
+
+    On observe assez vite le surapprentissage lorsqu'on augmente la
+profondeur de l'arbre
+
+Avantages : * On peut contrôler la complexité de l'arbre en jouant sur
+des paramètres avec la profondeur ou des stratégies d'élagage *
+Interprétabilité des décisions * Pas de problématique de prise en compte
+des échelles différentes entre les variables (même si dans notre cas,
+nous travaillons sur des données standardisées)
+
+Inconvénient majeur : * Même en jouant sur la complexité de l'arbre, un
+arbre tend au surapprentissage et fournit de piètre performance de
+généralisation
+
+    \hypertarget{random-forest}{%
+\subsubsection{Random Forest}\label{random-forest}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{79}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{ensemble} \PY{k+kn}{import} \PY{n}{RandomForestRegressor}
+\PY{n}{nbTree} \PY{o}{=} \PY{l+m+mi}{100}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Nombre d}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{arbres considérés : }\PY{l+s+si}{\PYZob{}}\PY{n}{nbTree}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{depth} \PY{o+ow}{in} \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{20}\PY{p}{,}\PY{l+m+mi}{30}\PY{p}{,} \PY{l+m+mi}{40}\PY{p}{]}\PY{p}{:}
+    \PY{n}{randomForest} \PY{o}{=} \PY{n}{RandomForestRegressor}\PY{p}{(}\PY{n}{n\PYZus{}estimators}\PY{o}{=}\PY{n}{nbTree}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{max\PYZus{}depth}\PY{o}{=}\PY{n}{depth}\PY{p}{)}
+    \PY{n}{randomForest}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} Max depth : }\PY{l+s+si}{\PYZob{}}\PY{n}{depth}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}Score sur le train avec RandomForest : }\PY{l+s+si}{\PYZob{}}\PY{n}{randomForest}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}train}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}Score sur le test avec RandomForest : }\PY{l+s+si}{\PYZob{}}\PY{n}{randomForest}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}test}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Nombre d'arbres considérés : 100
+--- Max depth : 5
+---------Score sur le train avec RandomForest : 0.8359706488563999
+---------Score sur le test avec RandomForest : 0.8289525406733299
+--- Max depth : 10
+---------Score sur le train avec RandomForest : 0.8896458202070148
+---------Score sur le test avec RandomForest : 0.8595626102602516
+--- Max depth : 15
+---------Score sur le train avec RandomForest : 0.9407613378235083
+---------Score sur le test avec RandomForest : 0.86188618552186
+--- Max depth : 20
+---------Score sur le train avec RandomForest : 0.9681499184443108
+---------Score sur le test avec RandomForest : 0.8596451915853982
+--- Max depth : 30
+---------Score sur le train avec RandomForest : 0.979733060427418
+---------Score sur le test avec RandomForest : 0.858242085415685
+--- Max depth : 40
+---------Score sur le train avec RandomForest : 0.9803220072381146
+---------Score sur le test avec RandomForest : 0.8581958142919872
+    \end{Verbatim}
+
+    On observe avec Random Forest une amélioration du score fonction de la
+profondeur considérées avec un surapprentissage de plus en plus
+important.
+
+    \hypertarget{gridsearch-et-validation-croisuxe9e}{%
+\subsubsection{GridSearch et Validation
+croisée}\label{gridsearch-et-validation-croisuxe9e}}
+
+Nous allons creuser un peu plus loin afin d'améliorer RandomForest en
+optimisant les hyperparamètres du modèle. Pour ce faire nous allons
+procéder par validation croisée avec 5 plis sur l'ensemble
+d'apprentissage. A l'aide de celle-ci, nous allons chercher quel(s)
+paramètre(s) nous donne(nt) le meilleur score et enfin nous évaluerons
+la qualité du modèle sur le jeu de données test.
+
+Les paramètres que nous allons chercher à optimiser dans RandomForest
+sont : * le paramètre max\_depth qui correspond à la profondeur de
+l'arbre * le nombre d'arbres à considérer dans la forêt * le nombre de
+features maximale à considérer
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{80}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{GridSearchCV}
+\PY{c+c1}{\PYZsh{} grille de valeurs}
+\PY{n}{params} \PY{o}{=} \PY{p}{[}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{max\PYZus{}depth}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n\PYZus{}estimators}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{100}\PY{p}{,}\PY{l+m+mi}{200}\PY{p}{,}\PY{l+m+mi}{300}\PY{p}{,}\PY{l+m+mi}{500}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{max\PYZus{}features}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{]}
+
+\PY{n}{gridSearchCV} \PY{o}{=} \PY{n}{GridSearchCV}\PY{p}{(}
+    \PY{n}{RandomForestRegressor}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+    \PY{n}{params}\PY{p}{,}
+    \PY{n}{cv}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{,}
+    \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}
+    \PY{n}{return\PYZus{}train\PYZus{}score}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{80}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+GridSearchCV(cv=5, estimator=RandomForestRegressor(), n\_jobs=-1,
+             param\_grid=[\{'max\_depth': [10, 15, 20],
+                          'max\_features': [12, 15, 20, 25],
+                          'n\_estimators': [100, 200, 300, 500]\}],
+             return\_train\_score=True)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{81}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Score sur le test : }\PY{l+s+si}{\PYZob{}:.2f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{,}\PY{n}{y\PYZus{}test}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Score sur le test : 0.86
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{82}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Best parameters : }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{best\PYZus{}params\PYZus{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Best cross\PYZhy{}validation score : }\PY{l+s+si}{\PYZob{}:.2f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{best\PYZus{}score\PYZus{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Best parameters : \{'max\_depth': 15, 'max\_features': 25, 'n\_estimators': 300\}
+Best cross-validation score : 0.86
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{83}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Best estimator:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Best estimator:
+RandomForestRegressor(max\_depth=15, max\_features=25, n\_estimators=300)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{84}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{featuresImportance} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{o}{.}\PY{n}{feature\PYZus{}importances\PYZus{}}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{featuresImportance}\PY{p}{[}\PY{p}{(}\PY{n}{featuresImportance}\PY{p}{)}\PY{o}{\PYZgt{}}\PY{l+m+mf}{0.03}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature Importance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_140_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    A travers une validation croisée et un grid search, on obtient un
+paramétrage via Random Forest et on peut visualiser les variables qui
+ont de l'importance. On retrouve des variables explicatives en lien avec
+notre analyse exploratoire. On est aussi dans un cas où il n'y a pas de
+surapprentissage.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}testPred} \PY{o}{=} \PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression metrics pour la forêt aléatoire optimisée for test data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}testPred}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Regression metrics pour la forêt aléatoire optimisée for test data
+       max\_error  mean\_absolute\_error  mean\_squared\_error  r2\_score
+0  667391.637514         71635.656938        1.122499e+10  0.862301
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{86}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}trainPred} \PY{o}{=} \PY{n}{gridSearchCV}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Regression metrics pour la forêt aléatoire optimisée for train data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{regression\PYZus{}metrics}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}trainPred}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Regression metrics pour la forêt aléatoire optimisée for train data
+       max\_error  mean\_absolute\_error  mean\_squared\_error  r2\_score
+0  535465.091525          54852.90272        6.189316e+09  0.925782
+    \end{Verbatim}
+
+    \hypertarget{sauvegarde-du-moduxe8le}{%
+\subsection{Sauvegarde du modèle}\label{sauvegarde-du-moduxe8le}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{87}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}from joblib import dump, load}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{88}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}dump(gridSearchCV.best\PYZus{}estimator\PYZus{}.predict, \PYZsq{}sauvegardeModele.joblib\PYZsq{}) }
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{89}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}clf = load(\PYZsq{}sauvegardeModele.joblib\PYZsq{}) }
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{90}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}clf.predict(X\PYZus{}test\PYZus{}scaled)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{91}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}dfDepIni.to\PYZus{}csv(\PYZsq{}../input/AvecCoordonneesGeo/dep75.csv\PYZsq{})}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+\hypertarget{sur-le-travail-ruxe9alisuxe9}{%
+\subsection{Sur le travail réalisé}\label{sur-le-travail-ruxe9alisuxe9}}
+
+\begin{itemize}
+\tightlist
+\item
+  L'analyse univariée et multivariée ont permis de mettre en évidence
+  des liens entre les variables explicatives et à expliquer
+\item
+  Le featuring Ingeenering a été un travail réalisé sur les dates pour
+  essayer de voir les liens avec la variable à prédire.
+\item
+  Les modèles linéaires donne des résultats pas très intéressants sur
+  certaines métriques
+\item
+  Un modèle basé sur des arbres de décision permet d'obtenir des
+  meilleurs résultats par rapport à la regression linéaire. Une
+  optimisation des paramètres a pu être mise en oeuvre via validation
+  croisée et grille de recherche
+\end{itemize}
+
+\hypertarget{sur-les-perspectives}{%
+\subsection{Sur les perspectives}\label{sur-les-perspectives}}
+
+\begin{itemize}
+\tightlist
+\item
+  Sur le code : la mise en place de Pipe avec l'utilisation de
+  OneHotEncoder et StandardScaler.
+\item
+  Sur les modèles : tester d'autres modèles pour améliorer la prévision.
+  On peut penser à une régression polynomiale ou boosting d'arbres de
+  régression, ou des modèles traitant spécifiquement de séries
+  temporelles.
+\item
+  Un traitement des points atypiques a été réalisé avec aussi de
+  l'imputation mais il faudrait passer plus de temps sur la
+  compréhension des données.
+\end{itemize}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
