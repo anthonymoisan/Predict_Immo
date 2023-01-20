@@ -5,5 +5,5 @@ Les données se trouvent sous https://www.data.gouv.fr/fr/datasets/demandes-de-v
 Pour le fichier d'entrée Power BI, il faut décommenter la ligne dans le code Jupyter
 
 
-Elles sont volumineuses et par conséquent ne sont pas sous Git
+Elles sont volumineuses et par conséquent ne sont pas sous Git pour générer dep752
 
