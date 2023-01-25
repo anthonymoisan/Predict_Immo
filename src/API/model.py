@@ -1,21 +1,35 @@
 from sklearn.ensemble import RandomForestRegressor
-
-# from sklearn.ensemble import RandomForestClassifier
+from sklearn import linear_model
+from sklearn.tree import DecisionTreeRegressor
 import pickle
+import enum
 
+class TypeRegression(enum.Enum):
+    RandomForest = 1
+    Arbre = 2
+    RegressionLineaire = 3
 
 
 class Model(object):
 
-    def __init__(self):
+    def __init__(self,TypeRegression):
+        self.typeRegression = TypeRegression
         """Mdodel
         Attributes:
-            clf: sklearn regression model
+            clf: sklearn Random Forest
         """
-        nbTree = 500
-        depth = 20
-        feature = 25
-        self.clf = RandomForestRegressor(n_estimators=nbTree, random_state=2, max_depth=depth, max_features=feature)
+       
+        
+    def instanciation(self):
+        if(self.typeRegression==TypeRegression.RandomForest):
+            nbTree = 500
+            depth = 20
+            feature = 25
+            self.clf = RandomForestRegressor(n_estimators=nbTree, random_state=2, max_depth=depth, max_features=feature)
+        elif(self.typeRegression==TypeRegression.Arbre):
+            self.clf = DecisionTreeRegressor(max_depth=10)
+        elif(self.typeRegression==TypeRegression.RegressionLineaire):
+            self.clf = linear_model.LinearRegression()
         
 
     
@@ -32,10 +46,33 @@ class Model(object):
         y_pred = self.clf.predict(X)
         return y_pred
 
+    def score(self,X,y):
+         return self.clf.score(X, y)
     
-    def pickle_clf(self, path='RandomForest.pkl'):
+    def pickle_clf(self):
         """Saves the trained classifier for future use.
         """
+        print("Model download")
+        if (self.typeRegression == TypeRegression.RandomForest):
+            path = '../Model/RandomForest.pkl'
+        elif (self.typeRegression == TypeRegression.Arbre): 
+            path = '../Model/Arbre.pkl'
+        elif (self.typeRegression == TypeRegression.RegressionLineaire):
+            path = '../Model/RegressionLineaire.pkl'
+        
         with open(path, 'wb') as f:
             pickle.dump(self.clf, f)
             print("Pickled regression at {}".format(path))
+    
+    def load_clf(self):
+        print("Load model")
+        if (self.typeRegression == TypeRegression.RandomForest):
+            path = '../Model/RandomForest.pkl'
+        elif (self.typeRegression == TypeRegression.Arbre): 
+            path = '../Model/Arbre.pkl'
+        elif (self.typeRegression == TypeRegression.RegressionLineaire):
+            path = '../Model/RegressionLineaire.pkl'
+        
+        with open(path, 'rb') as f:
+            self.clf = pickle.load(f)
+            print("Model load at {}".format(path))
