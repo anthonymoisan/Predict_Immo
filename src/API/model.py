@@ -52,7 +52,6 @@ class Model(object):
     def pickle_clf(self):
         """Saves the trained classifier for future use.
         """
-        print("Model download")
         if (self.typeRegression == TypeRegression.RandomForest):
             path = '../Model/RandomForest.pkl'
         elif (self.typeRegression == TypeRegression.Arbre): 
@@ -65,7 +64,6 @@ class Model(object):
             print("Pickled regression at {}".format(path))
     
     def load_clf(self):
-        print("Load model")
         if (self.typeRegression == TypeRegression.RandomForest):
             path = '../Model/RandomForest.pkl'
         elif (self.typeRegression == TypeRegression.Arbre): 
