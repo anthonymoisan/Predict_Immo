@@ -157,10 +157,10 @@ class Cleaning_DataSet(Resource):
         dataset = pd.read_json(json.loads(args['data']))
         if 'Column1' in dataset.columns:
             dataset.drop(['Column1'], inplace=True, axis=1)
-        print("Taille Av", dataset.shape)
+        #print("Taille Av", dataset.shape)
         print(dataset.columns)
         dataCleaning(dataset)
-        print("Taille Ap", dataset.shape)
+        #print("Taille Ap", dataset.shape)
 
         return jsonify(dataset.to_json())
 
