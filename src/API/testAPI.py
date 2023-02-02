@@ -32,7 +32,7 @@ def build_2D_Data(X):
     print('Taille de la requete : ',X.shape)
     return X
 
-def truc():
+def AutreTest():
     #Cleaning du dataset
     params = {'data': json.dumps(dataset.to_json()) }
     url = 'http://127.0.0.1:5000/CleaningData'
@@ -111,10 +111,13 @@ if __name__ == '__main__':
     
     #Réalisation de toutes les étapes sauf lecture du dataset
     params = {'data': json.dumps(dataset.to_json()) }
-    url = 'http://127.0.0.1:5000/All_Step_Predict_With_RandomForest'
+    url = 'http://127.0.0.1:5000/All_Step_Predict_With_AllModels'
     response = requests.post(url,params).json()
     dataFrameResult = pd.read_json(response)
-    print("Prediction : ",dataFrameResult["Predictions"])
+    print("predictionRandomForest : ",dataFrameResult["predictionRandomForest"])
+    print("predictionRegressionLineaire : ",dataFrameResult["predictionRegressionLineaire"])
+    print("predictionArbre : ",dataFrameResult["predictionArbre"])
+    
     print("id mutation :",dataFrameResult["id_mutation"])
     print("Train or Test :",dataFrameResult['Train or Test'])
     

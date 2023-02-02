@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 app = Flask(__name__)
 api = Api(app)
 
-class All_Step_Predict_With_RandomForest(Resource):
+class All_Step_Predict_With_AllModels(Resource):
     
     def post(self):
         parser = reqparse.RequestParser()
@@ -20,18 +20,16 @@ class All_Step_Predict_With_RandomForest(Resource):
         args = parser.parse_args()
         dataset = pd.read_json(json.loads(args['data']))
         print("--> Data Cleaning")
-        print("Taille av : ", dataset.shape)
-        print(dataset.columns)
         if 'Column1' in dataset.columns:
             dataset.drop(['Column1'], inplace=True, axis=1)  
         dataCleaning(dataset)
-        print("Taille : ", dataset.shape)
         print("--> Build X and Y")
         X,y = buildEnsembleX_y(dataset)
         print("--> Train and test split")
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=777)       
         print("--> Normalisation")
         X_train_scaled,X_test_scaled,scaler = standardisationNumerical(X_train,X_test)
+        
         print("--> Random Forest")
         model = Model(TypeRegression.RandomForest)
         model.instanciation()
@@ -42,13 +40,32 @@ class All_Step_Predict_With_RandomForest(Resource):
         print("Score sur le train : ", model.score(X_train_scaled,y_train))
         print("Score sur le test : ", model.score(X_test_scaled,y_test))
         
-        prediction = model.predict(scaler.transform(X))
+        predictionRandomForest = model.predict(scaler.transform(X))
         
+        print("--> Régression linéaire")
+        model = Model(TypeRegression.RegressionLineaire)
+        model.instanciation()
+        print("--> Download model")
+        model.load_clf()
+        print("--> Predict")
         
+        print("Score sur le train : ", model.score(X_train_scaled,y_train))
+        print("Score sur le test : ", model.score(X_test_scaled,y_test))
         
-        #insertion à la dernière position du dataframe les prédictions de notre modèle sur la matrice X centrée-réduite
-        #dataset.insert(len(dataset.columns),"Predictions", prediction.tolist())
-
+        predictionRegressionLineaire = model.predict(scaler.transform(X))
+       
+        print("--> Arbre")
+        model = Model(TypeRegression.Arbre)
+        model.instanciation()
+        print("--> Download model")
+        model.load_clf()
+        print("--> Predict")
+        
+        print("Score sur le train : ", model.score(X_train_scaled,y_train))
+        print("Score sur le test : ", model.score(X_test_scaled,y_test))
+        
+        predictionArbre = model.predict(scaler.transform(X))
+       
         listTrainOrTest = [None] * (len(y_train)+len(y_test))
     
         for index in y_train.index:
@@ -62,7 +79,9 @@ class All_Step_Predict_With_RandomForest(Resource):
         
         dictResponse = { 
             "id_mutation" : dataset['id_mutation'].tolist(),
-            "Predictions" : prediction.tolist(),
+            "predictionRandomForest" : predictionRandomForest.tolist(),
+            "predictionRegressionLineaire" : predictionRegressionLineaire.tolist(),
+            "predictionArbre" : predictionArbre.tolist(),
             "Train or Test": listTrainOrTest,
                      }
         resultDataFrame = pd.DataFrame(dictResponse)
@@ -216,7 +235,7 @@ api.add_resource(Cleaning_DataSet, '/CleaningData')
 api.add_resource(DefineXY, '/DefineXY')
 api.add_resource(TrainSplitTest, '/TrainSplitTest')
 api.add_resource(StandardisationNumerical, '/StandardisationNumerical')
-api.add_resource(All_Step_Predict_With_RandomForest, '/All_Step_Predict_With_RandomForest')
+api.add_resource(All_Step_Predict_With_AllModels, '/All_Step_Predict_With_AllModels')
 
 if __name__ == '__main__':
     app.run(debug=True)
